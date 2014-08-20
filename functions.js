@@ -10,6 +10,9 @@ $( document ).ready(function() {
         tableCliente = [];
     }
     
+    // listar os resultados
+    list();
+    
     $("#form_data").on("submit", function(){
         if (operation == "c") {
             
@@ -21,11 +24,10 @@ $( document ).ready(function() {
     });
 });
 
-function create() {
-    
+function create()
+{    
     // funcao para salvar os dados do formulario no localStorage
     var data = JSON.stringify({
-        id      : $('#id').val(),
         name    : $('#name').val(),
         email   : $('#email').val()
     });
@@ -33,4 +35,31 @@ function create() {
     tableCliente.push(data);
     localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
     alert("Registro Salvo com sucesso!");
+}
+
+function list()
+{
+    $("#list_data").html("");
+    $("#list_data").html(
+        "<thead>"+
+        "<tr>"+
+        "<th>Nome</th>"+
+        "<th>Email</th>"+
+        "<th>Ações</th>"+
+        "</tr>"+
+        "</thead>"+
+        "<tbody>"+
+        "</tbody>"
+    );
+    
+    for(var i in tableCliente){
+        
+        var cli = JSON.parse(tableCliente[i]);
+        
+        $("#list_data tbody").append("<tr>");
+        $("#list_data tbody").append("<td>"+cli.name+"</td>");
+        $("#list_data tbody").append("<td>"+cli.email+"</td>");
+        $("#list_data tbody").append("<td><a href='javascript:' id='"+i+"' class='edit'>Editar</a>&nbsp;<a href='javascript:' id='"+i+"' class='delete'>Apagar</a></td>");
+        $("#list_data tbody").append("</tr>");
+    }
 }
