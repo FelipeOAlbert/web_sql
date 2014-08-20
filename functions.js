@@ -1,3 +1,4 @@
+// iniciando as variaveis
 var operation       = "c";
 var item_id         = -1;
 var tableCliente    = localStorage.getItem("tableCliente");
@@ -22,7 +23,6 @@ $( document ).ready(function() {
     });
     
     $(".edit").on("click", function(){
-        
         operation   = "u";
         item_id     = parseInt($(this).attr("id"));
         var cli     = JSON.parse(tableCliente[item_id]);
@@ -31,11 +31,18 @@ $( document ).ready(function() {
         $('#email').val(cli.email);
         $("#name").focus();
     });
+    
+    $(".delete").on("click", function(){
+        item_id     = parseInt($(this).attr("id"));
+        delete_data();
+        list();
+    });
+    
 });
 
+// funcao para salvar os dados do formulario no localStorage
 function create()
 {    
-    // funcao para salvar os dados do formulario no localStorage
     var data = JSON.stringify({
         name    : $('#name').val(),
         email   : $('#email').val()
@@ -47,6 +54,7 @@ function create()
     return true;
 }
 
+// funcao para atualizar os dados no localStorage
 function update()
 {
     tableCliente[item_id] = JSON.stringify({
@@ -60,6 +68,15 @@ function update()
     return true;
 }
 
+// funcao para apagar dados no localStorage
+function delete_data()
+{
+    tableCliente.splice(item_id, 1);
+    localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+    alert("Registro Excluído");
+}
+
+// funcao para listar dados salvos no localStorage
 function list()
 {
     $("#list_data").html("");
