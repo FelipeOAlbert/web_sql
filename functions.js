@@ -15,12 +15,21 @@ $( document ).ready(function() {
     
     $("#form_data").on("submit", function(){
         if (operation == "c") {
-            
             return create();
         }else{
-            alert('funcao para editar...');
-            return false;
+            return update();
         }
+    });
+    
+    $(".edit").on("click", function(){
+        
+        operation   = "u";
+        item_id     = parseInt($(this).attr("id"));
+        var cli     = JSON.parse(tableCliente[item_id]);
+        
+        $('#name').val(cli.name);
+        $('#email').val(cli.email);
+        $("#name").focus();
     });
 });
 
@@ -35,6 +44,20 @@ function create()
     tableCliente.push(data);
     localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
     alert("Registro Salvo com sucesso!");
+    return true;
+}
+
+function update()
+{
+    tableCliente[item_id] = JSON.stringify({
+        name    : $('#name').val(),
+        email   : $('#email').val()
+    });
+    
+    localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+    alert("Dados editado com sucesso");
+    operation = "c";
+    return true;
 }
 
 function list()
