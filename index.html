@@ -1,0 +1,31 @@
+<!DOCTYPE html >
+<html>
+    <head>
+        <title>Meu primeiro HTML5</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <script type="text/javascript" src="jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="functions.js"></script>
+    </head>
+    <body>
+        <form id="form_data" method="post">
+            <ul>
+                <li>
+                    <label for="id">ID</label>
+                    <input type="text" name="id" id="id" value="" readonly="readonly" />
+                </li>
+                <li>
+                    <label for="name">Nome</label>
+                    <input type="text" name="name" id="name" value="" required="required" />
+                </li>
+                <li>
+                    <label for="name">Email</label>
+                    <input type="text" name="email" id="email" value="" required="required" />
+                </li>
+                <li>
+                    <input type="submit" value="Salvar" id="save" />
+                </li>
+            </ul>
+        </form>
+        <table id="list_data"></table>
+    </body>
+</html>
