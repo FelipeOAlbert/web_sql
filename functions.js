@@ -24,18 +24,57 @@ $( document ).ready(function() {
     
     $(".edit").on("click", function(){
         operation   = "u";
-        item_id     = parseInt($(this).attr("id"));
-        var cli     = JSON.parse(tableCliente[item_id]);
+        item_id     = $(this).attr("id");
         
-        $('#name').val(cli.name);
-        $('#email').val(cli.email);
-        $("#name").focus();
+        $.each(tableCliente, function(key, val){
+            var data = JSON.parse(val);
+            
+            if (data.id == item_id) {
+                //code
+                $('#name').val(data.name);
+                $('#email').val(data.email);
+                $("#name").focus();
+            }
+            
+        });
     });
     
     $(".delete").on("click", function(){
-        item_id     = parseInt($(this).attr("id"));
+        item_id     = $(this).attr("id");
         delete_data();
         list();
+    });
+    
+    $("#sync").on("click", function(){
+        
+        var to_sync = [];
+        
+        $.each(tableCliente, function(key, val){
+            
+            var data = JSON.parse(val);
+            
+            console.log(data);return false;
+            
+            
+            //tableCliente[data.] = JSON.stringify({
+            //    sync   : 1
+            //});
+            //
+            //localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+            
+            //$.each(val, function (chave, campo){
+            //    
+            //    var data = JSON.parse(campo);
+            //    
+            //    console.log(data);return false;
+            //    
+            //});
+            
+            //console.log(val);return false;
+            
+        });
+        
+        
     });
     
 });
@@ -44,8 +83,10 @@ $( document ).ready(function() {
 function create()
 {    
     var data = JSON.stringify({
+        id      : $.md5(Date($.now())),
         name    : $('#name').val(),
-        email   : $('#email').val()
+        email   : $('#email').val(),
+        sync    : 0
     });
     
     tableCliente.push(data);
@@ -57,9 +98,18 @@ function create()
 // funcao para atualizar os dados no localStorage
 function update()
 {
-    tableCliente[item_id] = JSON.stringify({
-        name    : $('#name').val(),
-        email   : $('#email').val()
+    $.each(tableCliente, function(key, val){
+        var data = JSON.parse(val);
+        
+        if (data.id == item_id) {
+            
+            tableCliente[key] = JSON.stringify({
+                id      : item_id,
+                name    : $('#name').val(),
+                email   : $('#email').val(),
+                sync    : data.sync
+            });
+        }
     });
     
     localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
@@ -71,9 +121,25 @@ function update()
 // funcao para apagar dados no localStorage
 function delete_data()
 {
-    tableCliente.splice(item_id, 1);
-    localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
-    alert("Registro Excluído");
+    var status = false;
+    
+    $.each(tableCliente, function(key, val){
+        var data = JSON.parse(val);
+        
+        if(data.id == item_id) {
+            tableCliente.splice(key, 1);
+            localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+            status = true;
+        }
+    });
+    
+    if (status) {
+        alert("Registro Excluído com sucesso");
+    }else{
+        alert("Erro ao Excluír Registro");
+    }
+    
+    return true;
 }
 
 // funcao para listar dados salvos no localStorage
@@ -99,7 +165,7 @@ function list()
         $("#list_data tbody").append("<tr>");
         $("#list_data tbody").append("<td>"+cli.name+"</td>");
         $("#list_data tbody").append("<td>"+cli.email+"</td>");
-        $("#list_data tbody").append("<td><a href='javascript:' id='"+i+"' class='edit'>Editar</a>&nbsp;<a href='javascript:' id='"+i+"' class='delete'>Apagar</a></td>");
+        $("#list_data tbody").append("<td><a href='javascript:' id='"+cli.id+"' class='edit'>Editar</a>&nbsp;<a href='javascript:' id='"+cli.id+"' class='delete'>Apagar</a></td>");
         $("#list_data tbody").append("</tr>");
     }
 }
