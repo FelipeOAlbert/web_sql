@@ -1,6 +1,6 @@
 // iniciando as variaveis
 var operation       = "c";
-var item_id         = -1;
+var item_id         = '';
 var tableCliente    = localStorage.getItem("tableCliente");
 tableCliente        = JSON.parse(tableCliente);
 
@@ -53,27 +53,26 @@ $( document ).ready(function() {
             
             var data = JSON.parse(val);
             
-            console.log(data);return false;
-            
-            
-            //tableCliente[data.] = JSON.stringify({
-            //    sync   : 1
-            //});
-            //
-            //localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
-            
-            //$.each(val, function (chave, campo){
-            //    
-            //    var data = JSON.parse(campo);
-            //    
-            //    console.log(data);return false;
-            //    
-            //});
-            
-            //console.log(val);return false;
-            
+            if (data.sync == 0) {
+                
+                to_sync[key] = data;
+                
+                tableCliente[key] = JSON.stringify({
+                    id      : data.id,
+                    name    : data.name,
+                    email   : data.email,
+                    sync    : 1
+                });
+                
+            }
         });
         
+        
+        // atualizando os dados...
+        localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+        
+        // verificar se esse array nao esta vazio, se nao estiver, postar para server e sync...
+        console.log(to_sync);
         
     });
     
