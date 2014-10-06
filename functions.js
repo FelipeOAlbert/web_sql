@@ -45,9 +45,13 @@ $( document ).ready(function() {
         list();
     });
     
-    $("#sync").on("click", function(){
+    $("#sync").on("click", function(event){
+        
+        event.preventDefault();
         
         var to_sync = [];
+        
+        var count = 0;
         
         $.each(tableCliente, function(key, val){
             
@@ -55,7 +59,9 @@ $( document ).ready(function() {
             
             if (data.sync == 0) {
                 
-                to_sync[key] = data;
+                to_sync[count] = data;
+                
+                count++;
                 
                 tableCliente[key] = JSON.stringify({
                     id      : data.id,
@@ -63,19 +69,47 @@ $( document ).ready(function() {
                     email   : data.email,
                     sync    : 1
                 });
-                
             }
         });
         
-        
-        // atualizando os dados...
-        localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
-        
         // verificar se esse array nao esta vazio, se nao estiver, postar para server e sync...
-        console.log(to_sync);
-        
+        if (to_sync.length > 0) {
+            
+            $.ajax({
+				type: 'POST',
+				dataType: 'json',
+                crossDomain: true,
+				url: 'http://local.websql.com.br/server/index.php/dashboard/sync',
+				async: false,
+				data: {'data' : to_sync},
+				success: function(response) {
+					if(response.retorno == 'sucess'){
+                        
+                        // atualizando os dados na tabela local...
+                        localStorage.setItem("tableCliente", JSON.stringify(tableCliente));
+						alert('Dados sincronizados com sucesso!');
+                        console.log('Dados sincronizados com sucesso!');
+                        
+					}else{
+						alert('Erro ao sicronizar, tente novamente mais tarde');
+                        console.log('Erro ao sicronizar, tente novamente mais tarde');
+					}
+				},
+                error: function(){
+					alert("Encontramos algum erro, tente novamente");
+					console.log('Erro ao sicronizar, tente novamente mais tarde');
+				}
+			});
+            
+        }else{
+            alert('Sem dados para sincronizar!');
+        }
     });
     
+});
+
+$(document).bind( "mobileinit", function() {
+	$.mobile.allowCrossDomainPages = true;
 });
 
 // funcao para salvar os dados do formulario no localStorage
@@ -106,7 +140,7 @@ function update()
                 id      : item_id,
                 name    : $('#name').val(),
                 email   : $('#email').val(),
-                sync    : data.sync
+                sync    : 0
             });
         }
     });
